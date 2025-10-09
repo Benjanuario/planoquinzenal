@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel de Administração - Plano Quinzenal</title>
+<style>
+  body {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 12pt;
+    background-color: #f9f9f9;
+    padding: 20px;
+  }
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+  form {
+    max-width: 700px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+  }
+  select, input, textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 12pt;
+  }
+  textarea {
+    height: 80px;
+  }
+  button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    font-size: 12pt;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #218838;
+  }
+  .mensagem {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    display: none;
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+</style>
+</head>
+<body>
+<h1>Painel de Administração</h1>
+<form id="formAdmin">
+  <label>Classe:</label>
+  <select id="classe">
+    <option value="1ª Classe">1ª Classe</option>
+    <option value="2ª Classe">2ª Classe</option>
+    <option value="3ª Classe">3ª Classe</option>
+    <option value="4ª Classe">4ª Classe</option>
+    <option value="5ª Classe">5ª Classe</option>
+    <option value="6ª Classe">6ª Classe</option>
+    <option value="7ª Classe">7ª Classe</option>
+    <option value="8ª Classe">8ª Classe</option>
+    <option value="9ª Classe">9ª Classe</option>
+    <option value="10ª Classe">10ª Classe</option>
+    <option value="11ª Classe">11ª Classe</option>
+    <option value="12ª Classe">12ª Classe</option>
+  </select>
+  <label>Disciplina:</label>
+  <select id="disciplina"></select>
+  <label>Trimestre:</label>
+  <select id="trimestre">
+    <option value="1º Trimestre">1º Trimestre</option>
+    <option value="2º Trimestre">2º Trimestre</option>
+    <option value="3º Trimestre">3º Trimestre</option>
+  </select>
+  <label>Semana:</label>
+  <select id="semana">
+    <!-- Será preenchido por JavaScript -->
+  </select>
+  <label>Unidade Temática:</label>
+  <input type="text" id="unidade" placeholder="Ex: Solo, Água, etc.">
+  <label>Objetivos Específicos:</label>
+  <textarea id="objetivos" placeholder="Cada objetivo em uma linha, use • no início"></textarea>
+  <label>Conteúdos:</label>
+  <textarea id="conteudos" placeholder="Cada conteúdo em uma linha, use • no início"></textarea>
+  <label>Competências Básicas:</label>
+  <textarea id="competencias" placeholder="Cada competência em uma linha, use • no início"></textarea>
+  <label>Carga Horária:</label>
+  <input type="text" id="carga" placeholder="Ex: 4h">
+  <button type="button" onclick="salvarPlano()">💾 Salvar Plano</button>
+  <div id="mensagem" class="mensagem"></div>
+</form>
+
+<script>
+// 🔗 URL do seu Apps Script
+const API_URL = "https://script.google.com/macros/s/AKfycbzr6uPcJzqZZfebnaaKFejIvazcxAH65uKWDlBpnU8wH6Pm-iITj-zRDE7bwinkEedp/exec";
+
+const disciplinasPorClasse = {
+  "1ª Classe":["Português","Matemática","Educação Física"],
+  "2ª Classe":["Português","Matemática","Educação Física"],
+  "3ª Classe":["Português","Matemática","Educação Física"],
+  "4ª Classe":["Português","Matemática","Ciências Naturais","Ciências Sociais","Educação Física"],
+  "5ª Classe":["Português","Matemática","Ciências Naturais","Ciências Sociais","Educação Visual e Ofícios","Educação Física"],
+  "6ª Classe":["Português","Matemática","Ciências Naturais","Ciências Sociais","Educação Visual e Ofícios","Educação Física"],
+  "7ª Classe":["Português","Matemática","Biologia","Química","Física","Geografia","História","TIC","Inglês","Educação Visual","Educação Física"],
+  "8ª Classe":["Português","Matemática","Biologia","Química","Física","Geografia","História","TIC","Inglês","Educação Visual","Educação Física"],
+  "9ª Classe":["Português","Matemática","Biologia","Química","Física","Geografia","História","TIC","Inglês","Educação Visual","Educação Física"],
+  "10ª Classe":["Português","Matemática","Biologia","Química","Física","Geografia","História","TIC","Inglês","Francês","Noções de Empreendedorismo","Educação Visual","Educação Física"],
+  "11ª Classe":["Português","Matemática","Biologia","Química","Física","Geografia","História","TIC","Inglês","Francês","Filosofia","Noções de Empreendedorismo","EVT","DGD","Educação Física"],
+  "12ª Classe":["Português","Matemática","Biologia","Química","Física","Geografia","História","TIC","Inglês","Francês","Filosofia","Noções de Empreendedorismo","EVT","DGD","Educação Física"]
+};
+
+function preencherSemanas() {
+  const select = document.getElementById('semana');
+  select.innerHTML = '';
+  for (let i = 1; i <= 13; i++) {
+    const option = document.createElement('option');
+    option.value = i;
+    option.textContent = `${i}ª Semana`;
+    select.appendChild(option);
+  }
+}
+
+function atualizarDisciplinas(){
+  const classeSelect = document.getElementById('classe');
+  const disciplinaSelect = document.getElementById('disciplina');
+  const disciplinas = disciplinasPorClasse[classeSelect.value] || [];
+  disciplinaSelect.innerHTML = '';
+  disciplinas.forEach(d => {
+    const option = document.createElement('option');
+    option.value = d;
+    option.textContent = d;
+    disciplinaSelect.appendChild(option);
+  });
+}
+
+document.getElementById('classe').addEventListener('change', atualizarDisciplinas);
+
+window.addEventListener('DOMContentLoaded', () => {
+  atualizarDisciplinas();
+  preencherSemanas();
+});
+
+function mostrarMensagem(texto) {
+  const msg = document.getElementById('mensagem');
+  msg.textContent = texto;
+  msg.style.display = 'block';
+  setTimeout(() => msg.style.display = 'none', 3000);
+}
+
+async function salvarPlano(){
+  const classe = document.getElementById('classe').value;
+  const disciplina = document.getElementById('disciplina').value;
+  const trimestre = document.getElementById('trimestre').value;
+  const semana = document.getElementById('semana').value;
+  const unidade = document.getElementById('unidade').value.trim();
+  const objetivos = document.getElementById('objetivos').value.trim();
+  const conteudos = document.getElementById('conteudos').value.trim();
+  const competencias = document.getElementById('competencias').value.trim();
+  const carga = document.getElementById('carga').value.trim();
+
+  if (!classe || !disciplina || !trimestre || !semana) {
+    alert("⚠️ Preencha todos os campos obrigatórios.");
+    return;
+  }
+
+  const dados = {
+    classe,
+    disciplina,
+    trimestre,
+    semana: parseInt(semana, 10),
+    unidade_tematica: unidade,
+    objetivo_especifico: objetivos,
+    conteudo: conteudos,
+    competencia_basica: competencias,
+    carga_horaria: carga  // ← Nova coluna
+  };
+
+  try {
+    const resposta = await fetch(API_URL, {
+      method: "POST",
+      body: JSON.stringify(dados),
+      headers: { "Content-Type": "application/json" }
+    });
+
+    const resultado = await resposta.json();
+
+    if (resultado.status === "success") {
+      mostrarMensagem("✅ Plano salvo com sucesso!");
+      document.getElementById('formAdmin').reset();
+      atualizarDisciplinas();
+      preencherSemanas();
+    } else {
+      alert("❌ Erro ao salvar: " + (resultado.message || "Erro desconhecido"));
+    }
+  } catch (e) {
+    console.error(e);
+    alert("❌ Falha na conexão: " + e.message);
+  }
+}
+</script>
+</body>
+</html>
