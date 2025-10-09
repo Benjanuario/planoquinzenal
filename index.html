@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gerador de Plano Quinzenal</title>
 <style>
-body { font-family: "Times New Roman", Times, serif; font-size: 12pt; padding: 20px; background-color: #f9f9f9;}
-h1 { text-align:center; color:#333;}
-form { max-width:700px; margin:0 auto; background:#fff; padding:20px; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1);}
-label { display:block; margin-top:15px; font-weight:bold;}
-select, input { width:100%; padding:8px; margin-top:5px; border-radius:4px; border:1px solid #ccc; font-size:12pt;}
-button { margin-top:20px; padding:10px 20px; background:#007BFF; color:#fff; font-size:12pt; border:none; border-radius:6px; cursor:pointer;}
-button:hover { background:#0056b3;}
+body { font-family: "Times New Roman", Times, serif; font-size: 12pt; padding: 20px; background-color: #f9f9f9; }
+h1 { text-align:center; color:#333; }
+form { max-width:700px; margin:0 auto; background:#fff; padding:20px; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+label { display:block; margin-top:15px; font-weight:bold; }
+select, input { width:100%; padding:8px; margin-top:5px; border-radius:4px; border:1px solid #ccc; font-size:12pt; }
+button { margin-top:20px; padding:10px 20px; background:#007BFF; color:#fff; font-size:12pt; border:none; border-radius:6px; cursor:pointer; }
+button:hover { background:#0056b3; }
 #resultado { margin-top: 30px; background:#fff; padding:20px; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); display:none; }
 pre { white-space: pre-wrap; word-wrap: break-word; }
 </style>
@@ -39,7 +39,6 @@ pre { white-space: pre-wrap; word-wrap: break-word; }
 <div id="resultado"><pre id="planoConteudo"></pre></div>
 
 <script>
-// 🔗 URL do seu Apps Script
 const API_URL = "https://script.google.com/macros/s/AKfycbzr6uPcJzqZZfebnaaKFejIvazcxAH65uKWDlBpnU8wH6Pm-iITj-zRDE7bwinkEedp/exec";
 
 const disciplinasPorClasse = {
@@ -57,95 +56,87 @@ const disciplinasPorClasse = {
   "12ª Classe":["Português","Matemática","Biologia","Química","Física","Geografia","História","TIC","Inglês","Francês","Filosofia","Noções de Empreendedorismo","EVT","DGD","Educação Física"]
 };
 
-function preencherSemanas(selectId) {
-  const select = document.getElementById(selectId);
-  select.innerHTML = '';
+function preencherSemanas(id) {
+  const sel = document.getElementById(id);
+  sel.innerHTML = '';
   for (let i = 1; i <= 13; i++) {
     const opt = document.createElement('option');
     opt.value = i;
     opt.textContent = `${i}ª Semana`;
-    select.appendChild(opt);
+    sel.appendChild(opt);
   }
 }
 
 function atualizarDisciplinas() {
-  const classeSelect = document.getElementById('classe');
-  const disciplinaSelect = document.getElementById('disciplina');
-  const disciplinas = disciplinasPorClasse[classeSelect.value] || [];
-  disciplinaSelect.innerHTML = '';
-  disciplinas.forEach(d => {
-    const option = document.createElement('option');
-    option.value = d;
-    option.textContent = d;
-    disciplinaSelect.appendChild(option);
+  const c = document.getElementById('classe');
+  const d = document.getElementById('disciplina');
+  const disc = disciplinasPorClasse[c.value] || [];
+  d.innerHTML = '';
+  disc.forEach(nome => {
+    const opt = document.createElement('option');
+    opt.value = nome;
+    opt.textContent = nome;
+    d.appendChild(opt);
   });
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  const classeSelect = document.getElementById('classe');
+  const c = document.getElementById('classe');
   Object.keys(disciplinasPorClasse).forEach(classe => {
-    const option = document.createElement('option');
-    option.value = classe;
-    option.textContent = classe;
-    classeSelect.appendChild(option);
+    const opt = document.createElement('option');
+    opt.value = classe;
+    opt.textContent = classe;
+    c.appendChild(opt);
   });
-  
-  // Define uma classe padrão (ex: 1ª Classe) para garantir que disciplinas apareçam
-  classeSelect.value = "1ª Classe";
+  c.value = "1ª Classe";
   atualizarDisciplinas();
-});
   preencherSemanas('semanaDe');
   preencherSemanas('semanaAte');
 });
 
-async function gerarPlano() {
-  const classe = document.getElementById('classe').value;
-  const disciplina = document.getElementById('disciplina').value;
-  const trimestre = document.getElementById('trimestre').value;
-  const semanaDe = parseInt(document.getElementById('semanaDe').value);
-  const semanaAte = parseInt(document.getElementById('semanaAte').value);
+document.getElementById('classe').addEventListener('change', atualizarDisciplinas);
 
-  if (!classe || !disciplina || !trimestre) {
+async function gerarPlano() {
+  const c = document.getElementById('classe').value;
+  const d = document.getElementById('disciplina').value;
+  const t = document.getElementById('trimestre').value;
+  const de = parseInt(document.getElementById('semanaDe').value);
+  const ate = parseInt(document.getElementById('semanaAte').value);
+
+  if (!c || !d || !t) {
     alert("Selecione Classe, Disciplina e Trimestre.");
     return;
   }
-
-  if (semanaDe > semanaAte) {
-    alert("A semana inicial não pode ser maior que a final.");
+  if (de > ate) {
+    alert("Semana inicial não pode ser maior que a final.");
     return;
   }
-
-  if (semanaAte - semanaDe > 2) {
+  if (ate - de > 2) {
     alert("O intervalo não pode exceder 3 semanas (ex: 1 a 3).");
     return;
   }
 
   try {
-    const url = `${API_URL}?classe=${encodeURIComponent(classe)}&disciplina=${encodeURIComponent(disciplina)}&trimestre=${encodeURIComponent(trimestre)}&semanaDe=${semanaDe}&semanaAte=${semanaAte}`;
+    const url = `${API_URL}?classe=${encodeURIComponent(c)}&disciplina=${encodeURIComponent(d)}&trimestre=${encodeURIComponent(t)}&semanaDe=${de}&semanaAte=${ate}`;
     const res = await fetch(url);
     const planos = await res.json();
 
-    let plano = "";
+    let txt = "";
     planos.forEach(p => {
-      plano += `Semana ${p.numero}\n`;
-      plano += `Unidade Temática: ${p.unidade_tematica || ""}\n`;
-      plano += `Objetivos: ${p.objetivo_especifico || ""}\n`;
-      plano += `Conteúdos: ${p.conteudo || ""}\n`;
-      plano += `Competências: ${p.competencia_basica || ""}\n`;
-      plano += `Carga Horária: ${p.carga_horaria || ""}\n\n`;  // ← Nova coluna
+      txt += `Semana ${p.numero}\n`;
+      txt += `Unidade Temática: ${p.unidade_tematica || ""}\n`;
+      txt += `Objetivos: ${p.objetivo_especifico || ""}\n`;
+      txt += `Conteúdos: ${p.conteudo || ""}\n`;
+      txt += `Competências: ${p.competencia_basica || ""}\n`;
+      txt += `Carga Horária: ${p.carga_horaria || ""}\n\n`;
     });
 
-    const resultadoDiv = document.getElementById("resultado");
-    const conteudoEl = document.getElementById("planoConteudo");
-    if (plano) {
-      conteudoEl.textContent = plano;
-    } else {
-      conteudoEl.textContent = "Nenhum plano encontrado para o período selecionado.";
-    }
-    resultadoDiv.style.display = "block";
+    const el = document.getElementById("planoConteudo");
+    el.textContent = txt || "Nenhum plano encontrado.";
+    document.getElementById("resultado").style.display = "block";
   } catch (e) {
     console.error(e);
-    alert("Erro ao carregar plano: " + e.message);
+    alert("Erro ao carregar plano.");
   }
 }
 </script>
