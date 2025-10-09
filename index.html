@@ -89,7 +89,11 @@ window.addEventListener('DOMContentLoaded', () => {
     option.textContent = classe;
     classeSelect.appendChild(option);
   });
+  
+  // Define uma classe padrão (ex: 1ª Classe) para garantir que disciplinas apareçam
+  classeSelect.value = "1ª Classe";
   atualizarDisciplinas();
+});
   preencherSemanas('semanaDe');
   preencherSemanas('semanaAte');
 });
