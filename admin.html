@@ -1,196 +1,203 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Painel de Administração - Plano Quinzenal</title>
-<style>
-  body {
-    font-family: "Times New Roman", Times, serif;
-    font-size: 12pt;
-    background-color: #f9f9f9;
-    padding: 20px;
-  }
-  h1 {
-    text-align: center;
-    color: #333;
-  }
-  form {
-    max-width: 700px;
-    margin: 0 auto;
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  }
-  label {
-    display: block;
-    margin-top: 15px;
-    font-weight: bold;
-  }
-  select, input, textarea {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    font-size: 12pt;
-  }
-  textarea {
-    height: 80px;
-  }
-  button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #28a745;
-    color: white;
-    font-size: 12pt;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  button:hover {
-    background-color: #218838;
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Administrativo - Plano Quinzenal</title>
+  <style>
+    body {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 12pt;
+      background: #f8fafc;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #003366;
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      font-size: 18pt;
+      letter-spacing: 1px;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #003366;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: bold;
+      color: #222;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 12pt;
+      resize: vertical;
+    }
+
+    textarea {
+      height: 80px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 10px;
+      background: #003366;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 13pt;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #0055aa;
+    }
+
+    .success-message {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 8px;
+      color: #0a5200;
+      background: #d1f7d6;
+      border: 1px solid #83d48a;
+      font-weight: bold;
+    }
+
+    .error-message {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 8px;
+      color: #7a0000;
+      background: #f7d1d1;
+      border: 1px solid #e38b8b;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-<h1>Painel de Administração</h1>
 
-<form id="formAdmin">
-  <label>Classe:</label>
-  <select id="classe">
-    <option value="1ª Classe">1ª Classe</option>
-    <option value="2ª Classe">2ª Classe</option>
-    <option value="3ª Classe">3ª Classe</option>
-    <option value="4ª Classe">4ª Classe</option>
-    <option value="5ª Classe">5ª Classe</option>
-    <option value="6ª Classe">6ª Classe</option>
-    <option value="7ª Classe">7ª Classe</option>
-    <option value="8ª Classe">8ª Classe</option>
-    <option value="9ª Classe">9ª Classe</option>
-    <option value="10ª Classe">10ª Classe</option>
-    <option value="11ª Classe">11ª Classe</option>
-    <option value="12ª Classe">12ª Classe</option>
-  </select>
+  <header>📘 Administração de Planos Quinzenais</header>
 
-  <label>Disciplina:</label>
-  <select id="disciplina"></select>
+  <div class="container">
+    <h2>Adicionar Conteúdo</h2>
 
-  <label>Trimestre:</label>
-  <select id="trimestre">
-    <option value="1º Trimestre">1º Trimestre</option>
-    <option value="2º Trimestre">2º Trimestre</option>
-    <option value="3º Trimestre">3º Trimestre</option>
-  </select>
+    <label for="disciplina">Disciplina:</label>
+    <input type="text" id="disciplina" placeholder="Ex: Matemática">
 
-  <label>Semana:</label>
-  <select id="semana">
-    <option value="1">1ª Semana</option>
-    <option value="2">2ª Semana</option>
-    <option value="3">3ª Semana</option>
-    <option value="4">4ª Semana</option>
-    <option value="5">5ª Semana</option>
-    <option value="6">6ª Semana</option>
-    <option value="7">7ª Semana</option>
-    <option value="8">8ª Semana</option>
-    <option value="9">9ª Semana</option>
-    <option value="10">10ª Semana</option>
-    <option value="11">11ª Semana</option>
-    <option value="12">12ª Semana</option>
-    <option value="13">13ª Semana</option>
-  </select>
+    <label for="classe">Classe:</label>
+    <input type="text" id="classe" placeholder="Ex: 8ª Classe">
 
-  <label>Objetivos Específicos:</label>
-  <textarea id="objetivos" placeholder="Cada objetivo em uma linha, use • no início"></textarea>
+    <label for="trimestre">Trimestre:</label>
+    <select id="trimestre">
+      <option value="">Selecione...</option>
+      <option value="1º Trimestre">1º Trimestre</option>
+      <option value="2º Trimestre">2º Trimestre</option>
+      <option value="3º Trimestre">3º Trimestre</option>
+    </select>
 
-  <label>Conteúdos:</label>
-  <textarea id="conteudos" placeholder="Cada conteúdo em uma linha, use • no início"></textarea>
+    <label for="semana">Semana:</label>
+    <input type="text" id="semana" placeholder="Ex: Semana 5">
 
-  <label>Competências Básicas:</label>
-  <textarea id="competencias" placeholder="Cada competência em uma linha, use • no início"></textarea>
+    <label for="conteudo">Conteúdo:</label>
+    <textarea id="conteudo" placeholder="Descreva o conteúdo da semana..."></textarea>
 
-  <label>Carga Horária:</label>
-  <input type="text" id="carga" placeholder="Ex: 4h">
+    <button id="salvarBtn">💾 Salvar no Firestore</button>
 
-  <button type="button" onclick="salvarPlano()">Salvar no Firestore</button>
-</form>
+    <div id="successMsg" class="success-message">✅ Dados salvos com sucesso!</div>
+    <div id="errorMsg" class="error-message">❌ Ocorreu um erro ao salvar. Verifique e tente novamente.</div>
+  </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-import { getFirestore, doc, setDoc, collection } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyA9gsPS9IOEm8g37GRTONgqgYSLnS8M7a8",
-  authDomain: "profbenjanuario.firebaseapp.com",
-  projectId: "profbenjanuario",
-  storageBucket: "profbenjanuario.appspot.com",
-  messagingSenderId: "782951240161",
-  appId: "1:782951240161:web:649298a2e13d04043c42a0"
-};
+    const firebaseConfig = {
+      apiKey: "AIzaSyA9gsPS9IOEm8g37GRTONgqgYSLnS8M7a8",
+      authDomain: "profbenjanuario.firebaseapp.com",
+      projectId: "profbenjanuario",
+      storageBucket: "profbenjanuario.appspot.com",
+      messagingSenderId: "782951240161",
+      appId: "1:782951240161:web:649298a2e13d04043c42a0"
+    };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-const disciplinasPorClasse = {
-  "1ª Classe":["Português","Matemática","Educação Física"],
-  "2ª Classe":["Português","Matemática","Educação Física"],
-  "3ª Classe":["Português","Matemática","Educação Física"],
-  "4ª Classe":["Português","Matemática","Ciências Naturais","Ciências Sociais","Educação Física"],
-  "5ª Classe":["Português","Matemática","Ciências Naturais","Ciências Sociais","Educação Visual e Ofícios","Educação Física"],
-  "6ª Classe":["Português","Matemática","Ciências Naturais","Ciências Sociais","Educação Visual e Ofícios","Educação Física"],
-  "7ª Classe":["Português","Matemática","Biologia","Química","Física","Geografia","História","TIC","Inglês","Educação Visual","Educação Física"],
-  "8ª Classe":["Português","Matemática","Biologia","Química","Física","Geografia","História","TIC","Inglês","Educação Visual","Educação Física"],
-  "9ª Classe":["Português","Matemática","Biologia","Química","Física","Geografia","História","TIC","Inglês","Educação Visual","Educação Física"],
-  "10ª Classe":["Português","Matemática","Biologia","Química","Física","Geografia","História","TIC","Inglês","Francês","Noções de Empreendedorismo","Educação Visual","Educação Física"],
-  "11ª Classe":["Português","Matemática","Biologia","Química","Física","Geografia","História","TIC","Inglês","Francês","Filosofia","Noções de Empreendedorismo","EVT","DGD","Educação Física"],
-  "12ª Classe":["Português","Matemática","Biologia","Química","Física","Geografia","História","TIC","Inglês","Francês","Filosofia","Noções de Empreendedorismo","EVT","DGD","Educação Física"]
-};
+    const salvarBtn = document.getElementById("salvarBtn");
+    const successMsg = document.getElementById("successMsg");
+    const errorMsg = document.getElementById("errorMsg");
 
-function atualizarDisciplinas(){
-  const classeSelect = document.getElementById('classe');
-  const disciplinaSelect = document.getElementById('disciplina');
-  const disciplinas = disciplinasPorClasse[classeSelect.value] || [];
-  disciplinaSelect.innerHTML = '';
-  disciplinas.forEach(d=>{
-    const option = document.createElement('option');
-    option.value = d;
-    option.textContent = d;
-    disciplinaSelect.appendChild(option);
-  });
-}
+    salvarBtn.addEventListener("click", async () => {
+      const disciplina = document.getElementById("disciplina").value.trim();
+      const classe = document.getElementById("classe").value.trim();
+      const trimestre = document.getElementById("trimestre").value;
+      const semana = document.getElementById("semana").value.trim();
+      const conteudo = document.getElementById("conteudo").value.trim();
 
-document.getElementById('classe').addEventListener('change', atualizarDisciplinas);
-window.addEventListener('DOMContentLoaded', atualizarDisciplinas);
+      if (!disciplina || !classe || !trimestre || !semana || !conteudo) {
+        errorMsg.innerText = "⚠️ Preencha todos os campos antes de salvar.";
+        errorMsg.style.display = "block";
+        successMsg.style.display = "none";
+        return;
+      }
 
-async function salvarPlano(){
-  try {
-    const classe = document.getElementById('classe').value;
-    const disciplina = document.getElementById('disciplina').value;
-    const trimestre = document.getElementById('trimestre').value;
-    const semana = document.getElementById('semana').value;
-    const objetivos = document.getElementById('objetivos').value;
-    const conteudos = document.getElementById('conteudos').value;
-    const competencias = document.getElementById('competencias').value;
-    const carga = document.getElementById('carga').value;
+      try {
+        await addDoc(collection(db, "planos"), {
+          disciplina,
+          classe,
+          trimestre,
+          semana,
+          conteudo,
+          data: new Date().toISOString()
+        });
 
-    const docRef = doc(collection(db, "programas_ensino", `${disciplina}_${classe}_${trimestre}`, "semanas"), `semana_${semana}`);
-    await setDoc(docRef, {
-      numero: parseInt(semana),
-      objetivo_especifico: objetivos,
-      conteudo: conteudos,
-      competencia_basica: competencias,
-      carga_horaria: carga
+        successMsg.style.display = "block";
+        errorMsg.style.display = "none";
+
+        // Limpar os campos
+        document.querySelectorAll("input, textarea, select").forEach(el => el.value = "");
+
+        setTimeout(() => {
+          successMsg.style.display = "none";
+        }, 4000);
+
+      } catch (e) {
+        console.error("Erro ao salvar:", e);
+        successMsg.style.display = "none";
+        errorMsg.style.display = "block";
+      }
     });
-
-    alert("✅ Plano salvo com sucesso no Firestore!");
-    document.getElementById('formAdmin').reset();
-  } catch (erro) {
-    alert("❌ Erro ao salvar: " + erro.message);
-    console.error(erro);
-  }
-}
-</script>
+  </script>
 </body>
 </html>
