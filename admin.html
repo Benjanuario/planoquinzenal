@@ -9,7 +9,7 @@
     font-family: "Times New Roman", Times, serif;
     font-size: 12pt;
     background-color: #f9f9f9;
-    padding: 10px;
+    padding: 20px;
   }
   h1 {
     text-align: center;
@@ -121,12 +121,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebas
 import { getFirestore, doc, setDoc, collection } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "SUA_API_KEY",
+  apiKey: "AIzaSyA9gsPS9IOEm8g37GRTONgqgYSLnS8M7a8",
   authDomain: "profbenjanuario.firebaseapp.com",
   projectId: "profbenjanuario",
   storageBucket: "profbenjanuario.firebasestorage.app",
   messagingSenderId: "782951240161",
-  appId: "SEU_APP_ID"
+  appId: "1:782951240161:web:649298a2e13d04043c42a0"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -179,10 +179,11 @@ async function salvarPlano(){
     objetivo_especifico: objetivos,
     conteudo: conteudos,
     competencia_basica: competencias,
-    carga_horaria: carga
+    carga_horaria: carga,
+    criado_em: new Date().toISOString()
   });
 
-  alert("Plano salvo com sucesso!");
+  alert("✅ Plano salvo com sucesso!");
   document.getElementById('formAdmin').reset();
 }
 </script>
