@@ -1,197 +1,296 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Painel de Administração - Plano Quinzenal</title>
-<style>
-  body {
-    font-family: "Times New Roman", Times, serif;
-    font-size: 12pt;
-    background-color: #f9f9f9;
-    padding: 20px;
-  }
-  h1 {
-    text-align: center;
-    color: #333;
-  }
-  form {
-    max-width: 700px;
-    margin: 0 auto;
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  }
-  label {
-    display: block;
-    margin-top: 15px;
-    font-weight: bold;
-  }
-  select, input, textarea {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    font-size: 12pt;
-  }
-  textarea {
-    height: 80px;
-  }
-  button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #28a745;
-    color: white;
-    font-size: 12pt;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-  button:hover {
-    background-color: #218838;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel de Administração - Plano Quinzenal</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 14px;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+      padding: 20px;
+      color: #333;
+    }
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    h1 {
+      font-size: 24px;
+      color: #1a5fb4;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      color: #666;
+      font-size: 14px;
+    }
+    .card {
+      background: white;
+      padding: 28px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    select,
+    input,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ced4da;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    select:focus,
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #1a5fb4;
+      box-shadow: 0 0 0 3px rgba(26, 95, 180, 0.15);
+    }
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: #1a5fb4;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn:hover {
+      background: #154a8a;
+    }
+    .btn:active {
+      transform: translateY(1px);
+    }
+    .success-message {
+      background: #d4edda;
+      color: #155724;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 16px;
+      display: none;
+    }
+  </style>
 </head>
 <body>
-<h1>Painel de Administração</h1>
-<form id="formAdmin">
-  <label>Classe:</label>
-  <select id="classe">
-    <option value="1ª Classe">1ª Classe</option>
-    <option value="2ª Classe">2ª Classe</option>
-    <option value="3ª Classe">3ª Classe</option>
-    <option value="4ª Classe">4ª Classe</option>
-    <option value="5ª Classe">5ª Classe</option>
-    <option value="6ª Classe">6ª Classe</option>
-    <option value="7ª Classe">7ª Classe</option>
-    <option value="8ª Classe">8ª Classe</option>
-    <option value="9ª Classe">9ª Classe</option>
-    <option value="10ª Classe">10ª Classe</option>
-    <option value="11ª Classe">11ª Classe</option>
-    <option value="12ª Classe">12ª Classe</option>
-  </select>
-  <label>Disciplina:</label>
-  <select id="disciplina"></select>
-  <label>Trimestre:</label>
-  <select id="trimestre">
-    <option value="1º Trimestre">1º Trimestre</option>
-    <option value="2º Trimestre">2º Trimestre</option>
-    <option value="3º Trimestre">3º Trimestre</option>
-  </select>
-  <label>Semana:</label>
-  <select id="semana">
-    <!-- Gerado via JS -->
-  </select>
-  <label>Unidade Temática:</label>
-  <input type="text" id="unidade" placeholder="Ex: Solo, Água, etc.">
-  <label>Objetivos Específicos:</label>
-  <textarea id="objetivos" placeholder="Cada objetivo em uma linha, use • no início"></textarea>
-  <label>Conteúdos:</label>
-  <textarea id="conteudos" placeholder="Cada conteúdo em uma linha, use • no início"></textarea>
-  <label>Competências Básicas:</label>
-  <textarea id="competencias" placeholder="Cada competência em uma linha, use • no início"></textarea>
-  <label>Carga Horária:</label>
-  <input type="text" id="carga" placeholder="Ex: 4h">
-  <button type="button" onclick="salvarPlano()">Salvar no Firestore</button>
-</form>
+  <div class="container">
+    <header>
+      <h1>📍 Painel de Administração</h1>
+      <p class="subtitle">Cadastre planos de ensino por semana, disciplina e classe</p>
+    </header>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+    <main class="card">
+      <form id="formAdmin">
+        <div class="form-group">
+          <label for="classe">Classe</label>
+          <select id="classe" required>
+            <option value="">Selecione uma classe</option>
+            <option value="1ª Classe">1ª Classe</option>
+            <option value="2ª Classe">2ª Classe</option>
+            <option value="3ª Classe">3ª Classe</option>
+            <option value="4ª Classe">4ª Classe</option>
+            <option value="5ª Classe">5ª Classe</option>
+            <option value="6ª Classe">6ª Classe</option>
+            <option value="7ª Classe">7ª Classe</option>
+            <option value="8ª Classe">8ª Classe</option>
+            <option value="9ª Classe">9ª Classe</option>
+            <option value="10ª Classe">10ª Classe</option>
+            <option value="11ª Classe">11ª Classe</option>
+            <option value="12ª Classe">12ª Classe</option>
+          </select>
+        </div>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyA9gsPS9IOEm8g37GRTONgqgYSLnS8M7a8",
-  authDomain: "profbenjanuario.firebaseapp.com",
-  projectId: "profbenjanuario",
-  storageBucket: "profbenjanuario.firebasestorage.app",
-  messagingSenderId: "782951240161",
-  appId: "1:782951240161:web:649298a2e13d04043c42a0"
-};
+        <div class="form-group">
+          <label for="disciplina">Disciplina</label>
+          <select id="disciplina" required>
+            <option value="">Selecione uma disciplina</option>
+          </select>
+        </div>
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+        <div class="form-group">
+          <label for="trimestre">Trimestre</label>
+          <select id="trimestre" required>
+            <option value="">Selecione o trimestre</option>
+            <option value="1º Trimestre">1º Trimestre</option>
+            <option value="2º Trimestre">2º Trimestre</option>
+            <option value="3º Trimestre">3º Trimestre</option>
+          </select>
+        </div>
 
-const disciplinasPorClasse = {
-  "1ª Classe":["Português","Matemática","Educação Física"],
-  "2ª Classe":["Português","Matemática","Educação Física"],
-  "3ª Classe":["Português","Matemática","Educação Física"],
-  "4ª Classe":["Português","Matemática","Ciências Naturais","Ciências Sociais","Educação Física"],
-  "5ª Classe":["Português","Matemática","Ciências Naturais","Ciências Sociais","Educação Visual e Ofícios","Educação Física"],
-  "6ª Classe":["Português","Matemática","Ciências Naturais","Ciências Sociais","Educação Visual e Ofícios","Educação Física"],
-  "7ª Classe":["Português","Matemática","Biologia","Química","Física","Geografia","História","TIC","Inglês","Educação Visual","Educação Física"],
-  "8ª Classe":["Português","Matemática","Biologia","Química","Física","Geografia","História","TIC","Inglês","Educação Visual","Educação Física"],
-  "9ª Classe":["Português","Matemática","Biologia","Química","Física","Geografia","História","TIC","Inglês","Educação Visual","Educação Física"],
-  "10ª Classe":["Português","Matemática","Biologia","Química","Física","Geografia","História","TIC","Inglês","Francês","Noções de Empreendedorismo","Educação Visual","Educação Física"],
-  "11ª Classe":["Português","Matemática","Biologia","Química","Física","Geografia","História","TIC","Inglês","Francês","Filosofia","Noções de Empreendedorismo","EVT","DGD","Educação Física"],
-  "12ª Classe":["Português","Matemática","Biologia","Química","Física","Geografia","História","TIC","Inglês","Francês","Filosofia","Noções de Empreendedorismo","EVT","DGD","Educação Física"]
-};
+        <div class="form-group">
+          <label for="semana">Semana</label>
+          <select id="semana" required>
+            <option value="">Selecione a semana</option>
+          </select>
+        </div>
 
-function preencherSemanas() {
-  const select = document.getElementById('semana');
-  select.innerHTML = '';
-  for (let i = 1; i <= 13; i++) {
-    const opt = document.createElement('option');
-    opt.value = i;
-    opt.textContent = `${i}ª Semana`;
-    select.appendChild(opt);
-  }
-}
+        <div class="form-group">
+          <label for="unidade">Unidade Temática</label>
+          <input type="text" id="unidade" placeholder="Ex: Solo, Água, Sistema Solar..." required />
+        </div>
 
-function atualizarDisciplinas(){
-  const classeSelect = document.getElementById('classe');
-  const disciplinaSelect = document.getElementById('disciplina');
-  const disciplinas = disciplinasPorClasse[classeSelect.value] || [];
-  disciplinaSelect.innerHTML = '';
-  disciplinas.forEach(d => {
-    const option = document.createElement('option');
-    option.value = d;
-    option.textContent = d;
-    disciplinaSelect.appendChild(option);
-  });
-}
+        <div class="form-group">
+          <label for="objetivos">Objetivos Específicos</label>
+          <textarea id="objetivos" placeholder="• Descrever as camadas da Terra&#10;• Identificar os tipos de rochas..." required></textarea>
+        </div>
 
-document.getElementById('classe').addEventListener('change', atualizarDisciplinas);
-window.addEventListener('DOMContentLoaded', () => {
-  atualizarDisciplinas();
-  preencherSemanas();
-});
+        <div class="form-group">
+          <label for="conteudos">Conteúdos</label>
+          <textarea id="conteudos" placeholder="• Estrutura interna da Terra&#10;• Ciclo das rochas..." required></textarea>
+        </div>
 
-async function salvarPlano(){
-  const classe = document.getElementById('classe').value;
-  const disciplina = document.getElementById('disciplina').value;
-  const trimestre = document.getElementById('trimestre').value;
-  const semana = document.getElementById('semana').value;
-  const unidade = document.getElementById('unidade').value.trim();
-  const objetivos = document.getElementById('objetivos').value.trim();
-  const conteudos = document.getElementById('conteudos').value.trim();
-  const competencias = document.getElementById('competencias').value.trim();
-  const carga = document.getElementById('carga').value.trim();
+        <div class="form-group">
+          <label for="competencias">Competências Básicas</label>
+          <textarea id="competencias" placeholder="• Pensamento crítico&#10;• Comunicação científica..." required></textarea>
+        </div>
 
-  if (!classe || !disciplina || !trimestre || !semana) {
-    alert("Preencha todos os campos obrigatórios.");
-    return;
-  }
+        <div class="form-group">
+          <label for="carga">Carga Horária</label>
+          <input type="text" id="carga" placeholder="Ex: 4h" required />
+        </div>
 
-  try {
-    const docRef = doc(db, "programas_ensino", `${disciplina}_${classe}_${trimestre}`, "semanas", `semana_${semana}`);
-    await setDoc(docRef, {
-      numero: parseInt(semana),
-      unidade_tematica: unidade,
-      objetivo_especifico: objetivos,
-      conteudo: conteudos,
-      competencia_basica: competencias,
-      carga_horaria: carga
+        <button type="button" class="btn" onclick="salvarPlano()">💾 Salvar Plano no Banco</button>
+
+        <div id="mensagemSucesso" class="success-message">
+          ✅ Plano salvo com sucesso!
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA9gsPS9IOEm8g37GRTONgqgYSLnS8M7a8",
+      authDomain: "profbenjanuario.firebaseapp.com",
+      projectId: "profbenjanuario",
+      storageBucket: "profbenjanuario.firebasestorage.app",
+      messagingSenderId: "782951240161",
+      appId: "1:782951240161:web:649298a2e13d04043c42a0"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const disciplinasPorClasse = {
+      "1ª Classe": ["Português", "Matemática", "Educação Física"],
+      "2ª Classe": ["Português", "Matemática", "Educação Física"],
+      "3ª Classe": ["Português", "Matemática", "Educação Física"],
+      "4ª Classe": ["Português", "Matemática", "Ciências Naturais", "Ciências Sociais", "Educação Física"],
+      "5ª Classe": ["Português", "Matemática", "Ciências Naturais", "Ciências Sociais", "Educação Visual e Ofícios", "Educação Física"],
+      "6ª Classe": ["Português", "Matemática", "Ciências Naturais", "Ciências Sociais", "Educação Visual e Ofícios", "Educação Física"],
+      "7ª Classe": ["Português", "Matemática", "Biologia", "Química", "Física", "Geografia", "História", "TIC", "Inglês", "Educação Visual", "Educação Física"],
+      "8ª Classe": ["Português", "Matemática", "Biologia", "Química", "Física", "Geografia", "História", "TIC", "Inglês", "Educação Visual", "Educação Física"],
+      "9ª Classe": ["Português", "Matemática", "Biologia", "Química", "Física", "Geografia", "História", "TIC", "Inglês", "Educação Visual", "Educação Física"],
+      "10ª Classe": ["Português", "Matemática", "Biologia", "Química", "Física", "Geografia", "História", "TIC", "Inglês", "Francês", "Noções de Empreendedorismo", "Educação Visual", "Educação Física"],
+      "11ª Classe": ["Português", "Matemática", "Biologia", "Química", "Física", "Geografia", "História", "TIC", "Inglês", "Francês", "Filosofia", "Noções de Empreendedorismo", "EVT", "DGD", "Educação Física"],
+      "12ª Classe": ["Português", "Matemática", "Biologia", "Química", "Física", "Geografia", "História", "TIC", "Inglês", "Francês", "Filosofia", "Noções de Empreendedorismo", "EVT", "DGD", "Educação Física"]
+    };
+
+    function preencherSemanas() {
+      const select = document.getElementById("semana");
+      select.innerHTML = '<option value="">Selecione a semana</option>';
+      for (let i = 1; i <= 13; i++) {
+        const option = document.createElement("option");
+        option.value = i;
+        option.textContent = `${i}ª Semana`;
+        select.appendChild(option);
+      }
+    }
+
+    function atualizarDisciplinas() {
+      const classe = document.getElementById("classe").value;
+      const disciplinaSelect = document.getElementById("disciplina");
+      disciplinaSelect.innerHTML = '<option value="">Selecione uma disciplina</option>';
+      if (classe && disciplinasPorClasse[classe]) {
+        disciplinasPorClasse[classe].forEach((disciplina) => {
+          const option = document.createElement("option");
+          option.value = disciplina;
+          option.textContent = disciplina;
+          disciplinaSelect.appendChild(option);
+        });
+      }
+    }
+
+    document.getElementById("classe").addEventListener("change", atualizarDisciplinas);
+
+    window.addEventListener("DOMContentLoaded", () => {
+      preencherSemanas();
     });
-    alert("Plano salvo com sucesso!");
-    document.getElementById('formAdmin').reset();
-    atualizarDisciplinas(); // opcional
-  } catch(e) {
-    console.error(e);
-    alert("Erro ao salvar: " + e.message);
-  }
-}
-</script>
+
+    async function salvarPlano() {
+      const form = document.getElementById("formAdmin");
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      const classe = document.getElementById("classe").value;
+      const disciplina = document.getElementById("disciplina").value;
+      const trimestre = document.getElementById("trimestre").value;
+      const semana = document.getElementById("semana").value;
+      const unidade = document.getElementById("unidade").value.trim();
+      const objetivos = document.getElementById("objetivos").value.trim();
+      const conteudos = document.getElementById("conteudos").value.trim();
+      const competencias = document.getElementById("competencias").value.trim();
+      const carga = document.getElementById("carga").value.trim();
+
+      try {
+        const docRef = doc(
+          db,
+          "programas_ensino",
+          `${disciplina}_${classe}_${trimestre}`,
+          "semanas",
+          `semana_${semana}`
+        );
+
+        await setDoc(docRef, {
+          numero: parseInt(semana, 10),
+          unidade_tematica: unidade,
+          objetivo_especifico: objetivos,
+          conteudo: conteudos,
+          competencia_basica: competencias,
+          carga_horaria: carga
+        });
+
+        document.getElementById("mensagemSucesso").style.display = "block";
+        form.reset();
+        setTimeout(() => {
+          document.getElementById("mensagemSucesso").style.display = "none";
+        }, 3000);
+      } catch (e) {
+        console.error("Erro ao salvar:", e);
+        alert("❌ Erro ao salvar o plano: " + (e.message || "Erro desconhecido"));
+      }
+    }
+  </script>
 </body>
 </html>
