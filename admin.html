@@ -48,6 +48,7 @@
     border: none;
     border-radius: 6px;
     cursor: pointer;
+    transition: 0.3s;
   }
   button:hover {
     background-color: #218838;
@@ -124,7 +125,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyA9gsPS9IOEm8g37GRTONgqgYSLnS8M7a8",
   authDomain: "profbenjanuario.firebaseapp.com",
   projectId: "profbenjanuario",
-  storageBucket: "profbenjanuario.firebasestorage.app",
+  storageBucket: "profbenjanuario.appspot.com",
   messagingSenderId: "782951240161",
   appId: "1:782951240161:web:649298a2e13d04043c42a0"
 };
@@ -164,27 +165,31 @@ document.getElementById('classe').addEventListener('change', atualizarDisciplina
 window.addEventListener('DOMContentLoaded', atualizarDisciplinas);
 
 async function salvarPlano(){
-  const classe = document.getElementById('classe').value;
-  const disciplina = document.getElementById('disciplina').value;
-  const trimestre = document.getElementById('trimestre').value;
-  const semana = document.getElementById('semana').value;
-  const objetivos = document.getElementById('objetivos').value;
-  const conteudos = document.getElementById('conteudos').value;
-  const competencias = document.getElementById('competencias').value;
-  const carga = document.getElementById('carga').value;
+  try {
+    const classe = document.getElementById('classe').value;
+    const disciplina = document.getElementById('disciplina').value;
+    const trimestre = document.getElementById('trimestre').value;
+    const semana = document.getElementById('semana').value;
+    const objetivos = document.getElementById('objetivos').value;
+    const conteudos = document.getElementById('conteudos').value;
+    const competencias = document.getElementById('competencias').value;
+    const carga = document.getElementById('carga').value;
 
-  const docRef = doc(collection(db, "programas_ensino", `${disciplina}_${classe}_${trimestre}`, "semanas"), `semana_${semana}`);
-  await setDoc(docRef, {
-    numero: parseInt(semana),
-    objetivo_especifico: objetivos,
-    conteudo: conteudos,
-    competencia_basica: competencias,
-    carga_horaria: carga,
-    criado_em: new Date().toISOString()
-  });
+    const docRef = doc(collection(db, "programas_ensino", `${disciplina}_${classe}_${trimestre}`, "semanas"), `semana_${semana}`);
+    await setDoc(docRef, {
+      numero: parseInt(semana),
+      objetivo_especifico: objetivos,
+      conteudo: conteudos,
+      competencia_basica: competencias,
+      carga_horaria: carga
+    });
 
-  alert("✅ Plano salvo com sucesso!");
-  document.getElementById('formAdmin').reset();
+    alert("✅ Plano salvo com sucesso no Firestore!");
+    document.getElementById('formAdmin').reset();
+  } catch (erro) {
+    alert("❌ Erro ao salvar: " + erro.message);
+    console.error(erro);
+  }
 }
 </script>
 </body>
