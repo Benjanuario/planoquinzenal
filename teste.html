@@ -18,7 +18,6 @@ pre { white-space: pre-wrap; word-wrap: break-word; }
 </head>
 <body>
 <h1>Gerador de Plano Quinzenal</h1>
-
 <form id="formPlanoQuinzenal">
   <label>Classe:</label>
   <select id="classe"></select>
@@ -36,11 +35,9 @@ pre { white-space: pre-wrap; word-wrap: break-word; }
   <select id="semanaAte"></select>
   <button type="button" onclick="gerarPlano()">Gerar Plano Quinzenal</button>
 </form>
-
 <div id="resultado"><pre id="planoConteudo"></pre></div>
-
 <script>
-const API_URL = "AKfycbzwUIx0Kuqr_Px1WOG5_uI0q3_pbeYSJXHjJnEO18OlZLQ7FkfUCFESBgGMihrl2bteZw/exec"; // substitui aqui também
+const API_URL = "https://script.google.com/macros/s/AKfycbzwUIx0Kuqr_Px1WOG5_uI0q3_pbeYSJXHjJnEO18OlZLQ7FkfUCFESBgGMihrl2bteZw/exec";
 
 const disciplinasPorClasse = {
   "1ª Classe":["Português","Matemática","Educação Física"],
@@ -112,17 +109,10 @@ async function gerarPlano() {
     alert("Semana inicial não pode ser maior que a final.");
     return;
   }
-  if (ate - de > 2) {
-    alert("O intervalo não pode exceder 3 semanas (ex: 1 a 3).");
-    return;
-  }
 
   try {
     const url = `${API_URL}?classe=${encodeURIComponent(c)}&disciplina=${encodeURIComponent(d)}&trimestre=${encodeURIComponent(t)}&semanaDe=${de}&semanaAte=${ate}`;
-    const res = await fetch(url, { mode: "cors" });
-
-    if (!res.ok) throw new Error("Falha na resposta da API");
-
+    const res = await fetch(url);
     const planos = await res.json();
 
     let txt = "";
@@ -139,8 +129,8 @@ async function gerarPlano() {
     el.textContent = txt || "Nenhum plano encontrado.";
     document.getElementById("resultado").style.display = "block";
   } catch (e) {
-    console.error("Erro ao gerar plano:", e);
-    alert("❌ Erro ao carregar plano. Verifique o link da API.");
+    console.error(e);
+    alert("❌ Erro ao carregar dados. Verifique o link da API e sua internet.");
   }
 }
 </script>
