@@ -17,7 +17,6 @@
 </head>
 <body>
 <h1>Painel de Administração</h1>
-
 <form id="formAdmin">
   <label>Classe:</label>
   <select id="classe">
@@ -34,40 +33,31 @@
     <option value="11ª Classe">11ª Classe</option>
     <option value="12ª Classe">12ª Classe</option>
   </select>
-
   <label>Disciplina:</label>
   <select id="disciplina"></select>
-
   <label>Trimestre:</label>
   <select id="trimestre">
     <option value="1º Trimestre">1º Trimestre</option>
     <option value="2º Trimestre">2º Trimestre</option>
     <option value="3º Trimestre">3º Trimestre</option>
   </select>
-
   <label>Semana:</label>
   <select id="semana"></select>
-
   <label>Unidade Temática:</label>
   <input type="text" id="unidade" placeholder="Ex: Solo, Água, etc.">
-
   <label>Objetivos Específicos:</label>
   <textarea id="objetivos" placeholder="Cada objetivo em uma linha, use • no início"></textarea>
-
   <label>Conteúdos:</label>
   <textarea id="conteudos" placeholder="Cada conteúdo em uma linha, use • no início"></textarea>
-
   <label>Competências Básicas:</label>
   <textarea id="competencias" placeholder="Cada competência em uma linha, use • no início"></textarea>
-
   <label>Carga Horária:</label>
   <input type="text" id="carga" placeholder="Ex: 4h">
-
   <button type="button" onclick="salvarPlano()">💾 Salvar Plano</button>
 </form>
-
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbzr6uPcJzqZZfebnaaKFejIvazcxAH65uKWDlBpnU8wH6Pm-iITj-zRDE7bwinkEedp/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzwUIx0Kuqr_Px1WOG5_uI0q3_pbeYSJXHjJnEO18OlZLQ7FkfUCFESBgGMihrl2bteZw/exec";
+
 const disciplinasPorClasse = {
   "1ª Classe":["Português","Matemática","Educação Física"],
   "2ª Classe":["Português","Matemática","Educação Física"],
@@ -136,8 +126,8 @@ async function salvarPlano(){
     const res = await fetch(API_URL, {
       method: "POST",
       body: JSON.stringify(dados),
-      headers: { "Content-Type": "application/json" },
-      mode: "cors"
+      headers: { "Content-Type": "application/json" }
+      // mode: "cors" removido para evitar problemas em alguns navegadores
     });
 
     const r = await res.json();
@@ -156,4 +146,4 @@ async function salvarPlano(){
 }
 </script>
 </body>
-  </html>
+</html>
