@@ -16,7 +16,7 @@
 </style>
 </head>
 <body>
-<h1>Painel de Administração</h1>
+<h1>Painel de Administração-Benjanuario</h1>
 <form id="formAdmin">
   <label>Classe:</label>
   <select id="classe">
@@ -127,7 +127,7 @@ async function salvarPlano(){
       method: "POST",
       body: JSON.stringify(dados),
       headers: { "Content-Type": "application/json" }
-      // mode: "cors" removido para evitar problemas em alguns navegadores
+      // ✅ REMOVIDO: mode: "cors"
     });
 
     const r = await res.json();
