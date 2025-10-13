@@ -5,15 +5,113 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gerador de Plano Quinzenal</title>
 <style>
-body { font-family: "Times New Roman", Times, serif; font-size: 12pt; padding: 20px; background-color: #f9f9f9; }
-h1 { text-align:center; color:#333; }
-form { max-width:700px; margin:0 auto; background:#fff; padding:20px; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
-label { display:block; margin-top:15px; font-weight:bold; }
-select, input { width:100%; padding:8px; margin-top:5px; border-radius:4px; border:1px solid #ccc; font-size:12pt; }
-button { margin-top:20px; padding:10px 20px; background:#007BFF; color:#fff; font-size:12pt; border:none; border-radius:6px; cursor:pointer; }
-button:hover { background:#0056b3; }
-#resultado { margin-top: 30px; background:#fff; padding:20px; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); display:none; }
-pre { white-space: pre-wrap; word-wrap: break-word; }
+body {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 12pt;
+  padding: 20px;
+  background-color: #f9f9f9;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+h1 {
+  text-align: center;
+  color: #333;
+}
+form {
+  max-width: 700px;
+  margin: 0 auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+}
+select, input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 12pt;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: #007BFF;
+  color: #fff;
+  font-size: 12pt;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+button:hover {
+  background: #0056b3;
+}
+
+#resultado {
+  margin-top: 30px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  display: none;
+}
+
+/* Estilo da tabela */
+#planoTabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11pt;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+#planoTabela th,
+#planoTabela td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+  vertical-align: top;
+}
+#planoTabela th {
+  background-color: #cccccc;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+#planoTabela td {
+  contenteditable: true;
+  outline: none;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+/* Controle de largura das colunas */
+.col-semana,
+.col-unidade {
+  width: 8%;
+}
+.col-ch {
+  width: 4%;
+}
+.col-objetivos,
+.col-conteudos,
+.col-competencias {
+  width: 25%;
+  word-wrap: break-word;
+}
 </style>
 </head>
 <body>
@@ -35,7 +133,25 @@ pre { white-space: pre-wrap; word-wrap: break-word; }
   <select id="semanaAte"></select>
   <button type="button" onclick="gerarPlano()">Gerar Plano Quinzenal</button>
 </form>
-<div id="resultado"><pre id="planoConteudo"></pre></div>
+
+<div id="resultado">
+  <table id="planoTabela">
+    <thead>
+      <tr>
+        <th class="col-semana">Semana</th>
+        <th class="col-unidade">Unidade Temática</th>
+        <th class="col-objetivos">Objectivos Específicos</th>
+        <th class="col-conteudos">Conteúdos</th>
+        <th class="col-competencias">Competências Básicas</th>
+        <th class="col-ch">C.H.</th>
+      </tr>
+    </thead>
+    <tbody id="planoCorpo">
+      <!-- Dados serão inseridos aqui -->
+    </tbody>
+  </table>
+</div>
+
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbx03POdfiCoZoMxJpWQFhVfGNSqb5kp_NTzb23H_EOExTJptWndlS9jpJsOywDlEBZN4Q/exec";
 
@@ -110,23 +226,46 @@ async function gerarPlano() {
     return;
   }
 
+  // Limitar a exibição a no máximo 3 semanas
+  const semanasParaExibir = [];
+  for (let i = de; i <= ate && semanasParaExibir.length < 3; i++) {
+    semanasParaExibir.push(i);
+  }
+
   try {
-    const url = `${API_URL}?classe=${encodeURIComponent(c)}&disciplina=${encodeURIComponent(d)}&trimestre=${encodeURIComponent(t)}&semanaDe=${de}&semanaAte=${ate}`;
+    const url = `${API_URL}?classe=${encodeURIComponent(c)}&disciplina=${encodeURIComponent(d)}&trimestre=${encodeURIComponent(t)}&semanaDe=${semanasParaExibir[0]}&semanaAte=${semanasParaExibir[semanasParaExibir.length - 1]}`;
     const res = await fetch(url);
     const planos = await res.json();
 
-    let txt = "";
-    planos.forEach(p => {
-      txt += `Semana ${p.numero}\n`;
-      txt += `Unidade Temática: ${p.unidade_tematica || ""}\n`;
-      txt += `Objetivos: ${p.objetivo_especifico || ""}\n`;
-      txt += `Conteúdos: ${p.conteudo || ""}\n`;
-      txt += `Competências: ${p.competencia_basica || ""}\n`;
-      txt += `Carga Horária: ${p.carga_horaria || ""}\n\n`;
-    });
+    // Filtrar apenas as semanas que devem ser exibidas (máx 3)
+    const planosFiltrados = planos.filter(p => semanasParaExibir.includes(p.numero));
 
-    const el = document.getElementById("planoConteudo");
-    el.textContent = txt || "Nenhum plano encontrado.";
+    const tbody = document.getElementById("planoCorpo");
+    tbody.innerHTML = "";
+
+    if (planosFiltrados.length === 0) {
+      const tr = document.createElement("tr");
+      const td = document.createElement("td");
+      td.colSpan = 6;
+      td.textContent = "Nenhum plano encontrado.";
+      td.style.textAlign = "center";
+      tr.appendChild(td);
+      tbody.appendChild(tr);
+    } else {
+      planosFiltrados.forEach(p => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="col-semana" contenteditable="true">${p.numero}</td>
+          <td class="col-unidade" contenteditable="true">${p.unidade_tematica || ""}</td>
+          <td class="col-objetivos" contenteditable="true">${p.objetivo_especifico || ""}</td>
+          <td class="col-conteudos" contenteditable="true">${p.conteudo || ""}</td>
+          <td class="col-competencias" contenteditable="true">${p.competencia_basica || ""}</td>
+          <td class="col-ch" contenteditable="true">${p.carga_horaria || ""}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
     document.getElementById("resultado").style.display = "block";
   } catch (e) {
     console.error(e);
