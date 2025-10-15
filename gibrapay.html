@@ -156,8 +156,8 @@ async function confirmarPagamento() {
   document.getElementById("numeroMpesa").value = "";
 
   try {
-    // 🔐 Chamada segura ao seu Web App (backend)
-    const response = await fetch("https://script.google.com/macros/s/AKfycbzI6ThpQJ2XMLgclwQaujJxdj2FiA7Uwcssj5AEXwjmCxtop2YYAcsIRv0ARpufkH-h/exec", {
+    // 🔐 CHAMADA AO SEU WEB APP SEGURO (BACKEND)
+    const response = await fetch("https://script.google.com/macros/s/AKfycbzIYe8Bwgx7V8V8aRvw0Ftg9duOa70rtRlJUbpdwmEBb9K5h8cODI9adxH20y7bkQ905w/exec", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -166,6 +166,10 @@ async function confirmarPagamento() {
         numeroMpesa: phoneInput
       })
     });
+
+    if (!response.ok) {
+      throw new Error(`Erro HTTP: ${response.status}`);
+    }
 
     const data = await response.json();
     console.log("Resposta do backend:", data);
@@ -176,10 +180,10 @@ async function confirmarPagamento() {
       gerarPDF();
     } else {
       msg.style.color = "#dc3545";
-      msg.innerText = "❌ " + (data.message || data.msg || "Falha no pagamento. Tente novamente.");
+      msg.innerText = "❌ " + (data.message || data.msg || "Falha no pagamento.");
     }
   } catch (err) {
-    console.error("Erro na chamada ao backend:", err);
+    console.error("Erro real:", err);
     msg.style.color = "#dc3545";
     msg.innerText = "❌ Erro de conexão. Verifique sua internet.";
   }
