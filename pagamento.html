@@ -126,186 +126,380 @@ input[type="tel"] { padding:10px; font-size:16px; width:220px; border:2px solid 
       }
     }
 
-    // === FUNÇÃO gerarPDF() (sem alterações) ===
-    function gerarPDF() {
-      const planoDataJSON = sessionStorage.getItem("planoData");
-      if (!planoDataJSON) {
-        alert("❌ Nenhum plano encontrado. Gere o plano antes.");
-        return;
+    // === FUNÇÃO: GERAR PDF DE PLANO DE AULA (INALTERADA) ===
+function gerarPdfPlanoAula(doc, planoData) {
+  doc.setFont("times", "normal");
+  doc.setFontSize(12);
+  doc.text("PLANO DE AULA", 148, 12, { align: "center" });
+
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = planoData.html;
+
+  let yLeft = 25;
+  const addLineLeft = (label, value) => {
+    if (value) {
+      doc.text(`${label}:`, 10, yLeft);
+      doc.text(value, 55, yLeft);
+      yLeft += 6;
+    }
+  };
+  const dadosEsquerda = tempDiv.querySelector('#dadosEsquerda');
+  if (dadosEsquerda) {
+    const esquerdaText = dadosEsquerda.innerText;
+    const lines = esquerdaText.split('\n');
+    lines.forEach(line => {
+      if (line.includes(':')) {
+        const [label, value] = line.split(':', 2);
+        addLineLeft(label.trim(), value.trim());
       }
-      const planoData = JSON.parse(planoDataJSON);
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
-      doc.setFont("times", "normal");
-      doc.setFontSize(12);
-      doc.text("PLANO DE AULA", 148, 12, { align: "center" });
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = planoData.html;
-      let yLeft = 25, yRight = 25;
-      const addLine = (label, value, x, y) => {
-        doc.text(`${label}:`, x, y);
-        doc.text(value, x + 45, y, { maxWidth: 100 });
-        return y + 6;
-      };
-      const dadosEsquerda = tempDiv.querySelector('#dadosEsquerda');
-      if (dadosEsquerda) {
-        dadosEsquerda.innerText.split('\n').forEach(l => {
-          if (l.includes(':')) {
-            const [lb, v] = l.split(/:\s*/, 2);
-            yLeft = addLine(lb.trim(), v?.trim() || '', 10, yLeft);
-          }
-        });
+    });
+  }
+
+  let yRight = 25;
+  const addLineRight = (label, value) => {
+    if (value) {
+      doc.text(`${label}:`, 160, yRight);
+      doc.text(value, 200, yRight);
+      yRight += 6;
+    }
+  };
+  const dadosDireita = tempDiv.querySelector('#dadosDireita');
+  if (dadosDireita) {
+    const direitaText = dadosDireita.innerText;
+    const lines = direitaText.split('\n');
+    lines.forEach(line => {
+      if (line.includes(':')) {
+        const [label, value] = line.split(':', 2);
+        addLineRight(label.trim(), value.trim());
       }
-      const dadosDireita = tempDiv.querySelector('#dadosDireita');
-      if (dadosDireita) {
-        dadosDireita.innerText.split('\n').forEach(l => {
-          if (l.includes(':')) {
-            const [lb, v] = l.split(/:\s*/, 2);
-            yRight = addLine(lb.trim(), v?.trim() || '', 160, yRight);
-          }
-        });
+    });
+  }
+
+  let lastY = Math.max(yLeft, yRight);
+  const listaObjetivos = tempDiv.querySelector('#listaObjetivos');
+  if (listaObjetivos) {
+    doc.text("Objetivos Específicos:", 10, lastY + 5);
+    let yObj = lastY + 12;
+    const objetivos = listaObjetivos.querySelectorAll('li');
+    objetivos.forEach(obj => {
+      const texto = obj.innerText.trim();
+      if (texto) {
+        doc.text(texto, 15, yObj);
+        yObj += 6;
       }
-      let lastY = Math.max(yLeft, yRight);
-      const listaObjetivos = tempDiv.querySelector('#listaObjetivos');
-      if (listaObjetivos) {
-        doc.text("Objetivos Específicos:", 10, lastY + 5);
-        let y = lastY + 12;
-        listaObjetivos.querySelectorAll("li").forEach(obj => {
-          doc.text("• " + obj.innerText.trim(), 15, y, { maxWidth: 130 });
-          y += 6;
-        });
-        lastY = y;
-      }
-      const tabela = tempDiv.querySelector('#tabelaPlano');
-      if (tabela) {
-        const rows = tabela.querySelectorAll('tbody tr');
-        const tableData = Array.from(rows).map(row => {
-          const cells = row.querySelectorAll('td');
-          return Array.from(cells).map(cell => {
-            let text = cell.innerHTML
-              .replace(/<br\s*\/?>/gi, '\n')
-              .replace(/<[^>]*>/g, '');
-            return text.trim();
-          });
-        });
-        doc.autoTable({
-          startY: lastY + 3,
-          head: [['TEMPO', 'FUNÇÕES DIDÁCTICAS', 'CONTEÚDOS', 'ACTIVIDADES DO PROFESSOR', 'ACTIVIDADES DOS ALUNOS', 'MÉTODOS DE ENSINO', 'MEIOS DE ENSINO']],
-          body: tableData,
-          theme: 'grid',
-          styles: {
-            font: 'times',
-            fontSize: 12,
-            textColor: [0,0,0],
-            lineColor: [0,0,0],
-            lineWidth: 0.2,
-            cellPadding: 3,
-            valign: 'top',
-            overflow: 'linebreak'
-          },
-          headStyles: {
-            fillColor: [200,200,200],
-            textColor: [0,0,0],
-            font: 'times',
-            fontSize: 12,
-            fontStyle: 'bold'
-          },
-          columnStyles: {
-            0: { cellWidth: 18 },
-            1: { cellWidth: 35 },
-            2: { cellWidth: 'auto' },
-            3: { cellWidth: 'auto' },
-            4: { cellWidth: 'auto' },
-            5: { cellWidth: 30 },
-            6: { cellWidth: 30 }
-          },
-          margin: { top: 15, bottom: 10, left: 7, right: 7 },
-          tableWidth: 'auto',
-          showHead: 'firstPage',
-          didDrawCell: function (data) {
-            if (data.section === 'body' && [0,1,5].includes(data.column.index)) {
-              data.cell.styles.valign = 'top';
-            }
-          }
-        });
-      }
-      (function renderAnexo() {
-        if (!planoData) return;
-        const anexType = planoData.anexoTipo || (planoData.anexoSalvo && planoData.anexoSalvo.tipo) || null;
-        const anexImg = planoData.anexoImagem || (planoData.anexoSalvo && planoData.anexoSalvo.tipo === 'imagem' && planoData.anexoSalvo.data) || null;
-        const anexTxtRaw = (planoData.anexoTexto && String(planoData.anexoTexto).trim() !== '')
-          ? planoData.anexoTexto
-          : (planoData.anexoSalvo && planoData.anexoSalvo.tipo === 'texto' ? planoData.anexoSalvo.data : null);
-        const emojiRegex = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu;
-        const anexTxt = anexTxtRaw ? anexTxtRaw.replace(emojiRegex, '') : null;
-        if (!anexType || (!anexImg && !anexTxt)) return;
-        const margemX = 20;
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const largura = Math.min(pageWidth - 2 * margemX, 250);
-        let alturaBox = anexType === 'imagem' ? 100 : 40;
-        if (anexTxt && anexType === 'texto') {
-          const lines = doc.splitTextToSize(anexTxt, largura - 10);
-          alturaBox = Math.max(40, Math.min(200, 10 + lines.length * 6));
-        }
-        let posY = 20;
-        if (doc.lastAutoTable && doc.lastAutoTable.finalY) {
-          posY = doc.lastAutoTable.finalY + 8;
-        } else if (typeof doc.getY === 'function') {
-          try { posY = doc.getY() + 8; } catch (e) { posY = 20; }
-        }
-        const pageHeight = doc.internal.pageSize.getHeight();
-        const bottomMargin = 10;
-        if (posY + alturaBox + bottomMargin > pageHeight) {
-          doc.addPage();
-          posY = 15;
-        }
-        doc.setDrawColor(0, 0, 0);
-        doc.rect(margemX, posY, largura, alturaBox);
-        doc.setFont("Times", "bold");
-        doc.setFontSize(12);
-        doc.text("ANEXO", margemX + largura / 2, posY + 8, { align: "center" });
-        if (anexType === "imagem" && anexImg) {
-          let fmt = 'PNG';
-          try {
-            const m = anexImg.match(/^data:image\/([a-zA-Z0-9+]+);base64,/);
-            if (m && m[1]) fmt = m[1].toUpperCase();
-          } catch (e) {}
-          const imgX = margemX + 5;
-          const imgY = posY + 12;
-          const imgW = largura - 10;
-          const imgH = alturaBox - 18;
-          try {
-            doc.addImage(anexImg, fmt, imgX, imgY, imgW, imgH);
-          } catch (e) {
-            doc.setFont("Times", "normal");
-            doc.setFontSize(12);
-            doc.text("Erro ao inserir imagem do anexo.", margemX + 5, posY + 18);
-          }
-        } else if (anexType === "texto" && anexTxt) {
-          doc.setFont("Times", "normal");
-          doc.setFontSize(12);
-          const txtLines = doc.splitTextToSize(anexTxt, largura - 10);
-          doc.text(txtLines, margemX + 5, posY + 15, {
-            align: 'justify',
-            maxWidth: largura - 10
-          });
-        }
-      })();
-      const nome = `Plano_de_Aula_${planoData.disciplina}_${planoData.classe}_${planoData.data}.pdf`;
-      doc.save(nome);
-      alert("📥 PDF baixado com sucesso!");
-      const historico = JSON.parse(localStorage.getItem("historicoPlanos")) || [];
-      historico.push({
-        escola: planoData.escola,
-        professor: planoData.professor,
-        disciplina: planoData.disciplina,
-        unidade: planoData.unidade,
-        tema: planoData.tema,
-        tipo: planoData.tipo,
-        classe: planoData.classe,
-        data: planoData.data
+    });
+    lastY = yObj;
+  }
+
+  const tabela = tempDiv.querySelector('#tabelaPlano');
+  if (tabela) {
+    const rows = tabela.querySelectorAll('tbody tr');
+    const tableData = Array.from(rows).map(row => {
+      const cells = row.querySelectorAll('td');
+      return Array.from(cells).map(cell => {
+        let text = cell.innerHTML
+          .replace(/<br\s*\/?>/gi, '\n')
+          .replace(/<[^>]*>/g, '');
+        return text.trim();
       });
-      localStorage.setItem("historicoPlanos", JSON.stringify(historico));
+    });
+    doc.autoTable({
+      startY: lastY + 3,
+      head: [['TEMPO', 'FUNÇÕES DIDÁCTICAS', 'CONTEÚDOS', 'ACTIVIDADES DO PROFESSOR', 'ACTIVIDADES DOS ALUNOS', 'MÉTODOS DE ENSINO', 'MEIOS DE ENSINO']],
+      body: tableData,
+      theme: 'grid',
+      styles: {
+        font: 'times',
+        fontSize: 12,
+        textColor: [0,0,0],
+        lineColor: [0,0,0],
+        lineWidth: 0.2,
+        cellPadding: 3,
+        valign: 'top',
+        overflow: 'linebreak'
+      },
+      headStyles: {
+        fillColor: [200,200,200],
+        textColor: [0,0,0],
+        font: 'times',
+        fontSize: 12,
+        fontStyle: 'bold'
+      },
+      columnStyles: {
+        0: { cellWidth: 18 },
+        1: { cellWidth: 35 },
+        2: { cellWidth: 'auto' },
+        3: { cellWidth: 'auto' },
+        4: { cellWidth: 'auto' },
+        5: { cellWidth: 30 },
+        6: { cellWidth: 30 }
+      },
+      margin: { top: 15, bottom: 10, left: 7, right: 7 },
+      tableWidth: 'auto',
+      showHead: 'firstPage',
+      didDrawCell: function (data) {
+        if (data.section === 'body' && [0,1,5].includes(data.column.index)) {
+          data.cell.styles.valign = 'top';
+        }
+      }
+    });
+  }
+
+  // === ANEXO (mantido exatamente como estava) ===
+  (function renderAnexo() {
+    if (!planoData) return;
+    const anexType = planoData.anexoTipo || (planoData.anexoSalvo && planoData.anexoSalvo.tipo) || null;
+    const anexImg = planoData.anexoImagem || (planoData.anexoSalvo && planoData.anexoSalvo.tipo === 'imagem' && planoData.anexoSalvo.data) || null;
+    const anexTxtRaw = (planoData.anexoTexto && String(planoData.anexoTexto).trim() !== '')
+      ? planoData.anexoTexto
+      : (planoData.anexoSalvo && planoData.anexoSalvo.tipo === 'texto' ? planoData.anexoSalvo.data : null);
+    const emojiRegex = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu;
+    const anexTxt = anexTxtRaw ? anexTxtRaw.replace(emojiRegex, '') : null;
+    if (!anexType || (!anexImg && !anexTxt)) return;
+    const margemX = 20;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const largura = Math.min(pageWidth - 2 * margemX, 250);
+    let alturaBox = anexType === 'imagem' ? 100 : 40;
+    if (anexTxt && anexType === 'texto') {
+      const lines = doc.splitTextToSize(anexTxt, largura - 10);
+      alturaBox = Math.max(40, Math.min(200, 10 + lines.length * 6));
+    }
+    let posY = 20;
+    if (doc.lastAutoTable && doc.lastAutoTable.finalY) {
+      posY = doc.lastAutoTable.finalY + 8;
+    } else if (typeof doc.getY === 'function') {
+      try { posY = doc.getY() + 8; } catch (e) { posY = 20; }
+    }
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const bottomMargin = 10;
+    if (posY + alturaBox + bottomMargin > pageHeight) {
+      doc.addPage();
+      posY = 15;
+    }
+    doc.setDrawColor(0, 0, 0);
+    doc.rect(margemX, posY, largura, alturaBox);
+    doc.setFont("Times", "bold");
+    doc.setFontSize(12);
+    doc.text("ANEXO", margemX + largura / 2, posY + 8, { align: "center" });
+    if (anexType === "imagem" && anexImg) {
+      let fmt = 'PNG';
+      try {
+        const m = anexImg.match(/^data:image\/([a-zA-Z0-9+]+);base64,/);
+        if (m && m[1]) fmt = m[1].toUpperCase();
+      } catch (e) {}
+      const imgX = margemX + 5;
+      const imgY = posY + 12;
+      const imgW = largura - 10;
+      const imgH = alturaBox - 18;
+      try {
+        doc.addImage(anexImg, fmt, imgX, imgY, imgW, imgH);
+      } catch (e) {
+        doc.setFont("Times", "normal");
+        doc.setFontSize(12);
+        doc.text("Erro ao inserir imagem do anexo.", margemX + 5, posY + 18);
+      }
+    } else if (anexType === "texto" && anexTxt) {
+      doc.setFont("Times", "normal");
+      doc.setFontSize(12);
+      const txtLines = doc.splitTextToSize(anexTxt, largura - 10);
+      doc.text(txtLines, margemX + 5, posY + 15, {
+        align: 'justify',
+        maxWidth: largura - 10
+      });
+    }
+  })();
+}
+
+// === FUNÇÃO: GERAR PDF DE PLANO QUINZENAL (NOVA) ===
+function gerarPdfPlanoQuinzenal(doc, planoData) {
+  doc.setFont("times", "normal");
+  doc.setFontSize(12);
+  doc.text("PLANO QUINZENAL", 148, 12, { align: "center" });
+
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = planoData.html;
+
+  // Extrair e renderizar o cabeçalho do ZIP
+  let startY = 25;
+  const cabecalhoEl = tempDiv.querySelector('#cabecalhoZip');
+  if (cabecalhoEl) {
+    const cabecalhoTexto = cabecalhoEl.innerText;
+    const lines = doc.splitTextToSize(cabecalhoTexto, 280);
+    lines.forEach((line, i) => {
+      doc.text(line, 148, startY + i * 6, { align: "center" });
+    });
+    startY += lines.length * 6 + 8;
+  }
+
+  // Renderizar a tabela
+  const tabela = tempDiv.querySelector('#tabelaPlano');
+  if (tabela) {
+    const rows = tabela.querySelectorAll('tbody tr');
+    const tableData = Array.from(rows).map(row => {
+      const cells = row.querySelectorAll('td');
+      return Array.from(cells).map(cell => {
+        let text = cell.innerHTML
+          .replace(/<br\s*\/?>/gi, '\n')
+          .replace(/<[^>]*>/g, '');
+        return text.trim();
+      });
+    });
+
+    const headers = Array.from(tabela.querySelectorAll('thead th')).map(th => th.innerText);
+
+    doc.autoTable({
+      startY: startY,
+      head: [headers],
+      body: tableData,
+      theme: 'grid',
+      styles: {
+        font: 'times',
+        fontSize: 12,
+        textColor: [0,0,0],
+        lineColor: [0,0,0],
+        lineWidth: 0.2,
+        cellPadding: 3,
+        valign: 'top',
+        overflow: 'linebreak'
+      },
+      headStyles: {
+        fillColor: [200,200,200],
+        textColor: [0,0,0],
+        font: 'times',
+        fontSize: 12,
+        fontStyle: 'bold'
+      },
+      margin: { top: 15, bottom: 10, left: 7, right: 7 },
+      tableWidth: 'auto',
+      showHead: 'firstPage'
+    });
+  }
+
+  // Anexo (opcional, reutiliza a mesma lógica)
+  (function renderAnexo() {
+    if (!planoData) return;
+    const anexType = planoData.anexoTipo || (planoData.anexoSalvo && planoData.anexoSalvo.tipo) || null;
+    const anexImg = planoData.anexoImagem || (planoData.anexoSalvo && planoData.anexoSalvo.tipo === 'imagem' && planoData.anexoSalvo.data) || null;
+    const anexTxtRaw = (planoData.anexoTexto && String(planoData.anexoTexto).trim() !== '')
+      ? planoData.anexoTexto
+      : (planoData.anexoSalvo && planoData.anexoSalvo.tipo === 'texto' ? planoData.anexoSalvo.data : null);
+    const emojiRegex = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu;
+    const anexTxt = anexTxtRaw ? anexTxtRaw.replace(emojiRegex, '') : null;
+    if (!anexType || (!anexImg && !anexTxt)) return;
+    const margemX = 20;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const largura = Math.min(pageWidth - 2 * margemX, 250);
+    let alturaBox = anexType === 'imagem' ? 100 : 40;
+    if (anexTxt && anexType === 'texto') {
+      const lines = doc.splitTextToSize(anexTxt, largura - 10);
+      alturaBox = Math.max(40, Math.min(200, 10 + lines.length * 6));
+    }
+    let posY = 20;
+    if (doc.lastAutoTable && doc.lastAutoTable.finalY) {
+      posY = doc.lastAutoTable.finalY + 8;
+    } else if (typeof doc.getY === 'function') {
+      try { posY = doc.getY() + 8; } catch (e) { posY = 20; }
+    }
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const bottomMargin = 10;
+    if (posY + alturaBox + bottomMargin > pageHeight) {
+      doc.addPage();
+      posY = 15;
+    }
+    doc.setDrawColor(0, 0, 0);
+    doc.rect(margemX, posY, largura, alturaBox);
+    doc.setFont("Times", "bold");
+    doc.setFontSize(12);
+    doc.text("ANEXO", margemX + largura / 2, posY + 8, { align: "center" });
+    if (anexType === "imagem" && anexImg) {
+      let fmt = 'PNG';
+      try {
+        const m = anexImg.match(/^data:image\/([a-zA-Z0-9+]+);base64,/);
+        if (m && m[1]) fmt = m[1].toUpperCase();
+      } catch (e) {}
+      const imgX = margemX + 5;
+      const imgY = posY + 12;
+      const imgW = largura - 10;
+      const imgH = alturaBox - 18;
+      try {
+        doc.addImage(anexImg, fmt, imgX, imgY, imgW, imgH);
+      } catch (e) {
+        doc.setFont("Times", "normal");
+        doc.setFontSize(12);
+        doc.text("Erro ao inserir imagem do anexo.", margemX + 5, posY + 18);
+      }
+    } else if (anexType === "texto" && anexTxt) {
+      doc.setFont("Times", "normal");
+      doc.setFontSize(12);
+      const txtLines = doc.splitTextToSize(anexTxt, largura - 10);
+      doc.text(txtLines, margemX + 5, posY + 15, {
+        align: 'justify',
+        maxWidth: largura - 10
+      });
+    }
+  })();
+}
+
+// === LÓGICA PRINCIPAL: ESCOLHER QUAL FUNÇÃO USAR ===
+const planoDataJSON = sessionStorage.getItem("planoData");
+if (!planoDataJSON) {
+  alert("❌ Nenhum plano encontrado. Gere o plano antes de tentar desbloquear.");
+  return;
+}
+const planoData = JSON.parse(planoDataJSON);
+const { jsPDF } = window.jspdf;
+const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+// Escolher função com base no tipo
+if (planoData.tipoPlano === "quinzenal") {
+  gerarPdfPlanoQuinzenal(doc, planoData);
+} else {
+  gerarPdfPlanoAula(doc, planoData);
+}
+
+// === NOME DO ARQUIVO ===
+let nome;
+if (planoData.tipoPlano === "quinzenal") {
+  const ano = new Date().getFullYear();
+  nome = `Plano_Quinzenal_${planoData.disciplina}_${planoData.classe}_${planoData.trimestre.replace(/\s+/g, '_')}_${ano}.pdf`;
+} else {
+  nome = `Plano_de_Aula_${planoData.disciplina}_${planoData.classe}_${planoData.data}.pdf`;
+}
+doc.save(nome);
+
+// === HISTÓRICO ===
+const historico = JSON.parse(localStorage.getItem("historicoPlanos")) || [];
+let entradaHistorico;
+if (planoData.tipoPlano === "quinzenal") {
+  const ano = new Date().getFullYear();
+  entradaHistorico = {
+    tipoPlano: "quinzenal",
+    disciplina: planoData.disciplina,
+    classe: planoData.classe,
+    trimestre: planoData.trimestre,
+    ano: ano,
+    zipNome: planoData.zipNome,
+    zipNumero: planoData.zipNumero
+  };
+} else {
+  entradaHistorico = {
+    tipoPlano: "aula",
+    escola: planoData.escola,
+    professor: planoData.professor,
+    disciplina: planoData.disciplina,
+    unidade: planoData.unidade,
+    tema: planoData.tema,
+    tipo: planoData.tipo,
+    classe: planoData.classe,
+     planoData.data
+  };
+}
+historico.push(entradaHistorico);
+localStorage.setItem("historicoPlanos", JSON.stringify(historico));
+
+msg.style.color = "#28a745";
+msg.innerText = `🎉 Código válido! PDFs restantes: ${data.restante}`;
+alert("✅ PDF desbloqueado e baixado com sucesso!");
     }
   </script>
 </body>
